@@ -95,14 +95,14 @@ jobs:
       with:
         command: build
         toolchain: ${{ matrix.toolchain }}
-        args: --target wasm32-unknown-unknown --features http-binding hyper hyper_wasi reqwest
+        args: --target wasm32-unknown-unknown --features "http-binding hyper hyper_wasi reqwest"
     - uses: actions-rs/cargo@v1
       name: "Test"
       if: matrix.target == 'wasm32-unknown-unknown'
       with:
         command: test
         toolchain: ${{ matrix.toolchain }}
-        args: --target ${{ matrix.target }} --features http-binding hyper hyper_wasi
+        args: --target ${{ matrix.target }} --features "http-binding hyper hyper_wasi"
 
     # Build examples
     - uses: actions-rs/cargo@v1
