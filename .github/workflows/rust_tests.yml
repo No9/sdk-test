@@ -22,6 +22,7 @@ jobs:
           - x86_64-unknown-linux-gnu
           - x86_64-unknown-linux-musl
           - wasm32-unknown-unknown
+          - wasm32-wasi
     steps:
     - uses: actions/checkout@v2
 
@@ -95,15 +96,21 @@ jobs:
       with:
         command: build
         toolchain: ${{ matrix.toolchain }}
-        args: --target wasm32-unknown-unknown --features "http-binding hyper hyper_wasi reqwest"
+        args: --target wasm32-unknown-unknown --features reqwest
+    - uses: actions-rs/cargo@v1
+      name: "Build"
+      if: matrix.target == 'wasm32-wasi'
+      with:
+        command: build
+        toolchain: ${{ matrix.toolchain }}
+        args: --target wasm32-wasi --features "http-binding hyper hyper_wasi"
     - uses: actions-rs/cargo@v1
       name: "Test"
-      if: matrix.target == 'wasm32-unknown-unknown'
+      if: matrix.target == 'wasm32-wasi'
       with:
         command: test
         toolchain: ${{ matrix.toolchain }}
         args: --target ${{ matrix.target }} --features "http-binding hyper hyper_wasi"
-
     # Build examples
     - uses: actions-rs/cargo@v1
       name: "Build reqwest-wasm-example"
