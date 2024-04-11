@@ -26,12 +26,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # setup wasmedge
+    - run: curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash
     # Setup musl if needed
     - run: sudo apt-get update
       if: matrix.target == 'x86_64-unknown-linux-musl'
     - run: sudo apt-get install -y musl musl-dev musl-tools cmake
       if: matrix.target == 'x86_64-unknown-linux-musl'
-
+    
     # # Caching stuff
     - uses: actions/cache@v2
       with:
@@ -111,6 +113,8 @@ jobs:
         command: test
         toolchain: ${{ matrix.toolchain }}
         args: --target ${{ matrix.target }} --features "http-binding hyper hyper_wasi"
+      env:
+        CARGO_TARGET_WASM32_WASI_RUNNER: wasmedge
     # Build examples
     - uses: actions-rs/cargo@v1
       name: "Build reqwest-wasm-example"
